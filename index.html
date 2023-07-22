@@ -67,23 +67,22 @@ params= [
 ];
 
 document.getElementById("buy_button").onclick = function () {
+  console.log(window.ethereum.networkVersion, 'window.ethereum.networkVersion');
   window.ethereum
     .request({
       method: 'eth_sendTransaction',
       params,
     })
     .then((result) => {
-      
-
+      window.ethereum.addEventListener
+      // unhide the access button as a workaround as long as transaction receipts are not working yet
+      setTimeout(()=>{access_button.removeAttribute("hidden")}, 1000);
     })
     .catch((error) => {
+
       // If the request fails, the Promise rejects with an error.
     });
-
-  // unhide the access button as a workaround as long as transaction receipts are not working yet
-  setTimeout(()=>{access_button.removeAttribute("hidden")}, 10000);;
 }
-
 
 //❌Check Airstack for received payment from users wallet
 /* import { init, useQuery } from "@airstack/airstack-react";
@@ -103,8 +102,34 @@ const MyComponent = () => {
     return <p>Error: {error.message}</p>;
   }
   // Render your component using the data returned by the query
+}; */
+
+//Use etherscan API to get payment receipt
+var getJSON = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status === 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status, xhr.response);
+      }
+    };
+    xhr.send();
 };
- */
+
+getJSON('https://api.etherscan.io/api?module=account&action=txlist&address=0x2F329b9f7aB72536A3D36CDb6E5E45DFBbD4BE7E&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=YEB8UUWJUMTWHYRQI5HTINY9CWMAA5CNHI',
+function(err, data) {
+  if (err !== null) {
+    alert('Something went wrong: ' + err);
+  } else {
+    alert('Your query count: ' + data.query.count);
+  }
+});
+
+
 //✅ Access sensor API
 document.getElementById("access_button").onclick = function () {
         fetch(apiUrl, {

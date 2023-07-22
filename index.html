@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+  <head>
+    <meta charset="utf-8" />
+    <title>Information Vending machine Prototyp ETHParis</title>
+    <meta
+      name="description"
+      content="Information Vending Machine"
+    />
+    <meta name="author" content="Sven" />
+    <style>
+      body {
+        margin: 15px auto;
+        max-width: 1000px;
+        line-height: 1.2;
+        font-family: sans-serif;
+        font-size: 2em;
+        color: #fff;
+        background: #444;
+      }
+    </style>
+
+</head>
+  <body>
+    <p>&nbsp</p>
+    <p style="text-align: center;" id="temp">How hot is ETHParis?</p>
+    <p></p>
+    <button type="button" style="background:#003F63; color:white; text-align:center;" id="access_button">access</button>
+    <button type="button" style="background:#003F63; color:white; text-align:center;" id="buy_button">check now!(0.01$)</button>
+    <!-- Display a connect button and the current account -->
+    <button class="enableEthereumButton" style="text-align: center;">Enable Ethereum</button>
+    <p>&nbsp</p>
+    <p style="font-size:small;">Account: <span class="showAccount"></span></p>
+
+    <script>
+      var apiUrl = 'https://eu1.cloud.thethings.network/api/v3/as/applications/fsti-labor-hn-temp-sensor/devices/eui-0025ca0a0000ed85/packages/storage/uplink_message?order=-received_at&limit=1';
+      var text1 = "ETHParis is "
+      var text2 = "°C hot!🔥🚀"
+      var userAccount = ""
+
+//✅connect web3 wallet
+const ethereumButton = document.querySelector('.enableEthereumButton');
+const showAccount = document.querySelector('.showAccount');
+ethereumButton.addEventListener('click', () => {
+  getAccount();
+});
+
+async function getAccount() {
+  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    .catch((err) => {
+      if (err.code === 4001) {
+        console.log('Please connect to MetaMask.');
+      } else {
+        console.error(err);
+      }
+    });
+  const account = accounts[0];
+  showAccount.innerHTML = account;
+}
+
+//✅Prompt payment to user (still mainnet; fixed send address must be changed to Users account)
+params= [
+  {
+    from: '0x2F329b9f7aB72536A3D36CDb6E5E45DFBbD4BE7E', //Make refer to User-Account
+    to: '0x2F329b9f7aB72536A3D36CDb6E5E45DFBbD4BE7E',
+    value: '0x4D849F15600', //Adjust to reflect 0.01$
+  },
+];
+
+document.getElementById("buy_button").onclick = function () {
+  window.ethereum
+    .request({
+      method: 'eth_sendTransaction',
+      params,
+    })
+    .then((result) => {
+      
+
+    })
+    .catch((error) => {
+      // If the request fails, the Promise rejects with an error.
+    });
+}
+
+//❌Check Airstack for received payment from users wallet
+
+//❌Payment to specified Adress is received
+
+//✅ Access sensor API
+document.getElementById("access_button").onclick = function () {
+        fetch(apiUrl, {
+                headers: { Authorization: 'Bearer NNSXS.DNVXK4YKFPXUWUPUNCVFHJLMXSDURVO2JNJIROA.YQ3BDBLXKUQNOUDTIR2Z6UEACKRAYC3TONU3AOHFGQDHESIBEUOQ' },
+            }).then(response => response.json())
+                .then(data => { document.getElementById("temp").textContent = text1.concat(data.result.uplink_message.decoded_payload.Temperature, text2); })
+                .catch(err => { document.getElementById("temp").innerHTML = "not good :-("; })
+            document.getElementById("buy_button").textContent = "update now! (0.01$)";
+            document.getElementById("buy_button").style.background = "darkcyan";
+            document.getElementById("feedback").textContent = "payment has been received";
+            setTimeout(() => {
+                document.getElementById("feedback").textContent = "";
+            }, 1000);
+        };
+
+    </script>
+  </body>
+</html>

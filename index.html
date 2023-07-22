@@ -57,7 +57,7 @@ async function getAccount() {
   showAccount.innerHTML = account;
   params= [
   {
-    from: account, //Make refer to User-Account
+    from: account,
     to: '0x2F329b9f7aB72536A3D36CDb6E5E45DFBbD4BE7E',
     value: '0x4D849F15600', 
   },
@@ -135,8 +135,6 @@ document.getElementById("access_button").onclick = function () {
             }).then(response => response.json())
                 .then(data => { document.getElementById("temp").textContent = text1.concat(data.result.uplink_message.decoded_payload.Temperature, text2); })
                 .catch(err => { document.getElementById("temp").innerHTML = "not good :-("; })
-            document.getElementById("buy_button").textContent = "4. update now!";
-            document.getElementById("buy_button").style.background = "darkcyan";
             document.getElementById("feedback").textContent = "payment has been received";
             setTimeout(() => {
                 document.getElementById("feedback").textContent = "";

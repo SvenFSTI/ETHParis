@@ -25,9 +25,9 @@
     <p>&nbsp</p>
     <p style="text-align: center;" id="temp">How hot is ETHParis?</p>
     <p></p>
-    <button class="enableEthereumButton" style="text-align: center;">Enable Ethereum</button>
-    <button type="button" style="background:#003F63; color:white; text-align:center;" id="buy_button">check now!(0.01$)</button>
-    <button hidden type="button" style="background:#003F63; color:white; text-align:center;" id="access_button">access</button>
+    <button class="enableEthereumButton" style="text-align: center;">1. Enable Ethereum</button>
+    <button type="button" style="background:#003F63; color:white; text-align:center;" id="buy_button">2. check now! (small amount of eth)</button>
+    <button hidden type="button" style="background:#003F63; color:white; text-align:center;" id="access_button">3. access</button>
     <p>&nbsp</p>
     <p style="font-size:small;">Account: <span class="showAccount"></span></p>
 
@@ -35,7 +35,7 @@
       var apiUrl = 'https://eu1.cloud.thethings.network/api/v3/as/applications/fsti-labor-hn-temp-sensor/devices/eui-0025ca0a0000ed85/packages/storage/uplink_message?order=-received_at&limit=1';
       var text1 = "ETHParis is "
       var text2 = "°C hot!🔥🚀"
-      var userAccount = ""
+      var account
 
 //✅connect web3 wallet
 const ethereumButton = document.querySelector('.enableEthereumButton');
@@ -45,7 +45,7 @@ ethereumButton.addEventListener('click', () => {
 });
 
 async function getAccount() {
-  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+   const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     .catch((err) => {
       if (err.code === 4001) {
         console.log('Please connect to MetaMask.');
@@ -53,19 +53,18 @@ async function getAccount() {
         console.error(err);
       }
     });
-  const account = accounts[0];
+  account = accounts[0];
   showAccount.innerHTML = account;
-}
-
-//✅Prompt payment to user (still mainnet; fixed send address must be changed to Users account)
-params= [
+  params= [
   {
-    from: '0x2F329b9f7aB72536A3D36CDb6E5E45DFBbD4BE7E', //Make refer to User-Account
+    from: account, //Make refer to User-Account
     to: '0x2F329b9f7aB72536A3D36CDb6E5E45DFBbD4BE7E',
-    value: '0x4D849F15600', //Adjust to reflect 0.01$
+    value: '0x4D849F15600', 
   },
 ];
+}
 
+//✅Prompt payment to user (still not checking user Network can be paid in testnetwork eth)
 document.getElementById("buy_button").onclick = function () {
   console.log(window.ethereum.networkVersion, 'window.ethereum.networkVersion');
   window.ethereum
@@ -76,15 +75,14 @@ document.getElementById("buy_button").onclick = function () {
     .then((result) => {
       window.ethereum.addEventListener
       // unhide the access button as a workaround as long as transaction receipts are not working yet
-      setTimeout(()=>{access_button.removeAttribute("hidden")}, 1000);
+      setTimeout(()=>{access_button.removeAttribute("hidden")}, 5000);
     })
     .catch((error) => {
-
-      // If the request fails, the Promise rejects with an error.
+      // If the request fails, the Promise rejects with an error. Still to be done
     });
 }
 
-//❌Check Airstack for received payment from users wallet
+//❌Check Airstack for received payment from users wallet (not implemented; see workaround)
 /* import { init, useQuery } from "@airstack/airstack-react";
 
 init("53ca8047cffd4eb890eab03954f8f728");
@@ -105,7 +103,7 @@ const MyComponent = () => {
 }; */
 
 //Use etherscan API to get payment receipt
-var getJSON = function(url, callback) {
+/* var getJSON = function(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'json';
@@ -128,7 +126,7 @@ function(err, data) {
     alert('Your query count: ' + data.query.count);
   }
 });
-
+ */
 
 //✅ Access sensor API
 document.getElementById("access_button").onclick = function () {
@@ -137,7 +135,7 @@ document.getElementById("access_button").onclick = function () {
             }).then(response => response.json())
                 .then(data => { document.getElementById("temp").textContent = text1.concat(data.result.uplink_message.decoded_payload.Temperature, text2); })
                 .catch(err => { document.getElementById("temp").innerHTML = "not good :-("; })
-            document.getElementById("buy_button").textContent = "update now! (0.01$)";
+            document.getElementById("buy_button").textContent = "4. update now!";
             document.getElementById("buy_button").style.background = "darkcyan";
             document.getElementById("feedback").textContent = "payment has been received";
             setTimeout(() => {

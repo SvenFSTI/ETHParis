@@ -25,10 +25,9 @@
     <p>&nbsp</p>
     <p style="text-align: center;" id="temp">How hot is ETHParis?</p>
     <p></p>
-    <button type="button" style="background:#003F63; color:white; text-align:center;" id="access_button">access</button>
-    <button type="button" style="background:#003F63; color:white; text-align:center;" id="buy_button">check now!(0.01$)</button>
-    <!-- Display a connect button and the current account -->
     <button class="enableEthereumButton" style="text-align: center;">Enable Ethereum</button>
+    <button type="button" style="background:#003F63; color:white; text-align:center;" id="buy_button">check now!(0.01$)</button>
+    <button hidden type="button" style="background:#003F63; color:white; text-align:center;" id="access_button">access</button>
     <p>&nbsp</p>
     <p style="font-size:small;">Account: <span class="showAccount"></span></p>
 
@@ -80,12 +79,32 @@ document.getElementById("buy_button").onclick = function () {
     .catch((error) => {
       // If the request fails, the Promise rejects with an error.
     });
+
+  // unhide the access button as a workaround as long as transaction receipts are not working yet
+  setTimeout(()=>{access_button.removeAttribute("hidden")}, 10000);;
 }
 
+
 //❌Check Airstack for received payment from users wallet
+/* import { init, useQuery } from "@airstack/airstack-react";
 
-//❌Payment to specified Adress is received
+init("53ca8047cffd4eb890eab03954f8f728");
 
+query={filter: {to: {_eq: "0x2F329b9f7aB72536A3D36CDb6E5E45DFBbD4BE7E"}}, blockchain: ethereum, limit: 1, order: {blockTimestamp: DESC}}
+
+const MyComponent = () => {
+  const { data, loading, error } = useQuery(query, variables, { cache: false });
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error.message}</p>;
+  }
+  // Render your component using the data returned by the query
+};
+ */
 //✅ Access sensor API
 document.getElementById("access_button").onclick = function () {
         fetch(apiUrl, {
